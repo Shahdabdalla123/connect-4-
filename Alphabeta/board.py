@@ -15,12 +15,10 @@ circle_radius = int(SQUARESIZE / 2 - 5)
 size = (width, height)
 screen = pygame.display.set_mode(size)
 
-
-
 def initial_board():
     board = np.zeros((Row_Num, Colum_Num))
     return board
-def putPiece(board, row, col, piece):
+def put_piece(board, row, col, piece):
     board[row][col] = piece
 
 def make_Gui_Board(board):
@@ -41,5 +39,7 @@ def make_Gui_Board(board):
                                    circle_radius)
 
     pygame.display.update()
+
+
 
 
