@@ -1,1 +1,1 @@
-Connect 4 one for minimax algorithm and another for Alphabeta algorithm 
+Connect 4 minimax with Alphabeta algorithm 
