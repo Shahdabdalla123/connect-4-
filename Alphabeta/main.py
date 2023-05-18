@@ -185,3 +185,59 @@ def Game_Over():
     global game_over
     game_over = True
     print(game_over)
+    board = initial_board()
+game_over = False
+not_over = True
+turn = random.randint(Computer_TURN, AI_TURN)
+pygame.init()
+my_font = pygame.font.SysFont("monospace", 75)
+
+make_Gui_Board(board)
+pygame.display.update()
+
+
+def start_game_with_alpha(depth):
+    global turn, not_over
+
+    while not game_over:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                sys.exit()
+
+        if turn == Computer_TURN and not game_over and not_over:
+            col, _ = Alphabeta(board, depth, -math.inf, math.inf, False)
+
+            if Empty_Colum(board, col):
+                pygame.time.wait(500)
+                row =Top_Row_Empty(board, col)
+                put_piece(board, row, col, Computer_PIECE)
+                if Win(board, Computer_PIECE):
+                    print("Computer WINS!")
+                    label = my_font.render("Computer WINS!", 1, RED)
+                    screen.blit(label, (40, 10))
+                    not_over = False
+                    t = Timer(3.0, Game_Over)
+                    t.start()
+
+            make_Gui_Board(board)
+            turn += 1
+            turn = turn % 2
+
+        if turn == AI_TURN and not game_over and not_over:
+            col, _ = Alphabeta(board, depth, -math.inf, math.inf, True)
+
+            if Empty_Colum(board, col):
+                pygame.time.wait(500)
+                row = Top_Row_Empty(board, col)
+                put_piece(board, row, col, AI_PIECE)
+                if Win(board, AI_PIECE):
+                    print("Agent WINS!")
+                    label = my_font.render("Agent WINS!", 1, YELLOW)
+                    screen.blit(label, (40, 10))
+                    not_over = False
+                    t = Timer(3.0, Game_Over)
+                    t.start()
+
+            make_Gui_Board(board)
+            turn += 1
+            turn = turn % 2
