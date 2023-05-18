@@ -167,8 +167,59 @@ def Alphabeta(board, depth, alpha, beta, MaxFlag):
             if alpha >= beta:
                 break
         return column, value
+    
+
+def Minimax (board, depth,MaxFlag):
+        # all valid Colums on the board
+        Valid_Colum = get_valid_Colums(board)
+        Terminal = Terminal_Test(board)
+
+        if depth == 0 or Terminal:
+            if Terminal:  # winning move
+                if Win(board, Computer_PIECE):
+                    return (None, -10000000)
+                elif Win(board, AI_PIECE):
+                    return (None, 10000000)
+                else:
+                    return (None, 0)
+
+            else:  # depth is zero
+                return (None, Calculate_score_position(board, AI_PIECE))
+
+        if MaxFlag:
+
+            value = -math.inf
+            column = random.choice(Valid_Colum)
+
+            for col in Valid_Colum:
+                row = Top_Row_Empty(board, col)
+                b_copy = board.copy()
+                put_piece(b_copy, row, col, AI_PIECE)
+                new_score = Minimax(b_copy, depth - 1, False)[1]
+
+                if new_score > value:
+                    value = new_score
+                    column = col
 
 
+            return column, value
+
+
+        else:  # for thte minimizing player
+            value = math.inf
+            column = random.choice(Valid_Colum)
+            for col in Valid_Colum:
+                row = Top_Row_Empty(board, col)
+                b_copy = board.copy()
+                put_piece(b_copy, row, col, Computer_PIECE)
+                new_score = Minimax(b_copy, depth - 1, True)[1]
+                if new_score < value:
+                    value = new_score
+                    column = col
+
+            return column, value
+        
+        
 # get all columns where a piece can be
 def get_valid_Colums(board):
     valid_locations = []
@@ -228,6 +279,53 @@ def start_game_with_alpha(depth):
 
         if turn == AI_TURN and not game_over and not_over:
             col, _ = Alphabeta(board, depth, -math.inf, math.inf, True)
+
+            if Empty_Colum(board, col):
+                pygame.time.wait(500)
+                row = Top_Row_Empty(board, col)
+                put_piece(board, row, col, AI_PIECE)
+                if Win(board, AI_PIECE):
+                    print("Agent WINS!")
+                    label = my_font.render("Agent WINS!", 1, YELLOW)
+                    screen.blit(label, (40, 10))
+                    not_over = False
+                    t = Timer(3.0, Game_Over)
+                    t.start()
+
+            make_Gui_Board(board)
+            turn += 1
+            turn = turn % 2
+            
+            
+def start_game_with_minimax(depth):
+    global turn, not_over
+
+    while not game_over:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                sys.exit()
+
+        if turn == Computer_TURN and not game_over and not_over:
+            col, _ = Minimax(board, depth, False)
+
+            if Empty_Colum(board, col):
+                pygame.time.wait(500)
+                row =Top_Row_Empty(board, col)
+                put_piece(board, row, col, Computer_PIECE)
+                if Win(board, Computer_PIECE):
+                    print("Computer WINS!")
+                    label = my_font.render("Computer WINS!", 1, RED)
+                    screen.blit(label, (40, 10))
+                    not_over = False
+                    t = Timer(3.0, Game_Over)
+                    t.start()
+
+            make_Gui_Board(board)
+            turn += 1
+            turn = turn % 2
+
+        if turn == AI_TURN and not game_over and not_over:
+            col, _ = Minimax(board, depth, True)
 
             if Empty_Colum(board, col):
                 pygame.time.wait(500)
