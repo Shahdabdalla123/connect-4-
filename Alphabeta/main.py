@@ -185,7 +185,10 @@ def Game_Over():
     global game_over
     game_over = True
     print(game_over)
-    board = initial_board()
+    
+    
+    
+board = initial_board()
 game_over = False
 not_over = True
 turn = random.randint(Computer_TURN, AI_TURN)
